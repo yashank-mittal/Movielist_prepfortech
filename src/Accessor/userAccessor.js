@@ -1,4 +1,5 @@
 const { UserRoles } = require('../constants/user');
+const User = require('../db/UserSchema');
 
 const dummyData = [
   {
@@ -22,6 +23,12 @@ function getUserByEmail(email) {
   return undefined;
 }
 
+function findByEmail(email){
+  return User.findOne({"email": email})
+}
+
+
 module.exports = {
-  getUserByEmail
+  getUserByEmail,
+  findByEmail
 };

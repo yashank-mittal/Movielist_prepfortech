@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const sessionAccessor = require('../Accessor/sessionAccessor');
 const SECRETKEY = 'ABCD';
 
 function checkifAuth(req,res,next){
@@ -7,8 +8,13 @@ function checkifAuth(req,res,next){
         const actualToken = tokenString.split(' ')[1];
         if(typeof actualToken !== 'undefined' && actualToken !== null){
             let data = jwt.verify(actualToken, SECRETKEY);
-            req.user = data;
-            next();
+            let session = sessionAccessor.findSessionByjwt(data);
+            if(session != 'undefined' && session != null){
+                req.email = session._conditions.jwt.email;
+                next();
+            }else{
+                console.log("Session not found")
+            }
         }
         else{
             res.status(401).send('Please login before accessing the API');
